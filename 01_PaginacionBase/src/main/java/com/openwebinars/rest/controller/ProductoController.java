@@ -3,6 +3,10 @@ package com.openwebinars.rest.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.openwebinars.rest.util.pagination.PaginationLiksUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +28,27 @@ import com.openwebinars.rest.modelo.Producto;
 import com.openwebinars.rest.service.ProductoServicio;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
 public class ProductoController {
 
 	private final ProductoServicio productoServicio;
+
 	private final ProductoDTOConverter productoDTOConverter;
+
+	private final PaginationLiksUtils paginationLiksUtils;
+
 
 	/**
 	 * Obtenemos todos los productos
 	 * 
 	 * @return 404 si no hay productos, 200 y lista de productos si hay uno o más
 	 */
+	/*
 	@GetMapping("/producto")
 	public ResponseEntity<?> obtenerTodos() {
 		List<Producto> result = productoServicio.findAll();
@@ -51,7 +63,35 @@ public class ProductoController {
 			return ResponseEntity.ok(dtoList);
 		}
 
+	}*/
+
+	/**
+	 * Obtenemos todos los productos paginados.
+	 * Ahora findAll en vez de retornar un listado, retorna un Page de Producto.
+	 * La clase Page define un metodo map, con lo cual no es necesario convertir a stream para hacer aplicar el converter.
+	 * Luego se agrega la cabecera link.
+	 *
+	 * @see Page
+	 * @param pageable Este se pasa a findAll. En caso de no recivir informacion, se define un param por defecto.
+	 * @param request para obtener el uri de la peticion.
+	 * @return 404 si no hay productos, 200 y lista de productos si hay uno o más
+	 */
+	@GetMapping("/producto")
+	public ResponseEntity<?> obtenerTodos(@PageableDefault(size=10, page=0) Pageable pageable, HttpServletRequest request) {
+		Page<Producto> result = productoServicio.findAll(pageable);
+
+		if (result.isEmpty()) {
+			throw new ProductoNotFoundException();
+		} else {
+			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
+			UriComponentsBuilder uriBuilder
+					= UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+			return ResponseEntity.ok().header("link",
+					paginationLiksUtils.createLinkHeader(dtoList, uriBuilder)).body(dtoList);
+		}
+
 	}
+
 
 	/**
 	 * Obtenemos un producto en base a su ID

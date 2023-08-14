@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductoServicio extends BaseService<Producto, Long, ProductoRepositorio> {
 
 	private final CategoriaServicio categoriaServicio;
+
 	private final StorageService storageService;
 	
 	

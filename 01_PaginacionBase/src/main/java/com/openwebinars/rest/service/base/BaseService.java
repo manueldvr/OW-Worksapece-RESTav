@@ -4,8 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Este servicio abstracto envuelve al repositorio.
+ * Es un wraper Permite utilizar en los controladores solo el servicio.
+ *
+ * @see JpaRepository
+ * @param <T>
+ * @param <ID>
+ * @param <R>
+ */
 public abstract class BaseService<T, ID, R extends JpaRepository<T, ID>> {
 
 	@Autowired
@@ -22,7 +33,17 @@ public abstract class BaseService<T, ID, R extends JpaRepository<T, ID>> {
 	public List<T> findAll() {
 		return repositorio.findAll();
 	}
-	
+
+	/**
+	 * Similar al findAll, pero con paginacion
+	 * @param t
+	 * @return
+	 */
+	public Page<T> findAll(Pageable pageable) {
+		return repositorio.findAll(pageable);
+	}
+
+
 	public T edit(T t) {
 		return repositorio.save(t);
 	}
