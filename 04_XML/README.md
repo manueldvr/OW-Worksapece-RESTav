@@ -1,29 +1,44 @@
-# Manejo de Parametros de Consultas - *parte II*
+# soporte XML
  
-Cuando debemos buscar en base a varios campos que se pueden combinar entre sí, la cantidad de posibilidades se multiplica exponencialmente.
 
-Manejo complicado en el Controlador
-- ¿qué parámetros sí hemos recibido?¿cuáles no?
+## Recurso VS Representacion
 
-Consultas complejas en el repositorio
-- muy dificil con consultas con nombres derivados
-- también complicado con `@Query` o consultas nativas
+*Recurso* es una entidad, como Producto
 
-## `Specification` y `JpaSpecificationExecutor`
+*Representación* se refiere al formato:
+- JSON
+- XML
+- HTML
+- binario
+- imagen
+- String
 
-### `Specification`
-- Tiene un solo método. Mecanismo que nos permite predicados reutilizables para utilizar con `CriteriaQuery`.
-- Los predicados pueden ser todo lo complejos que necesitamos.
 
-```
-public interface Specification<T> {
-    Predicate toPredicat(Root<T>  root, CriteriaQuery query, CriteriaBuilder criteria);
-}
-```
+## Negociación del Contenido
 
-### `JpaSpecificationExecutor`
+Al relizar una petición, se puede negociar el formato de la representación que:
+- se envía
+- se recibe
 
-Un repositorio que además de `CrudRepository` o un derivado, extienda a `JpaSpecificationExecutor`, podrá ejecutar consultas con un `Specification`.
+Encabezado;
+- *Accept*: indica el tipode dato esperado de la respuesta
+- *Content-Type*: indica el tipo de contenido del cuerpo de la petición.
+
+
+## Formato por defecto
+
+Spring Boot, al detectar Jackson2 en el classpath, formatea por defecto JSON.
+
+Si se indica otro tipo de dato, como *application/xml*, obtendremos un error `406 Not Acceptable`.
+
+
+## XML
+
+Se necesita convertir las clases a XML y viceversa.
+
+Alternativas:
+- *JAXB*: obliga a añadir anotaciones adicionales a las de Jackson.
+- **Jackson XML**: complemento para transformar a XML utilizando todo lo que se sabe de Jackson.
 
 
 ---
