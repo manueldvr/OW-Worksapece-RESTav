@@ -20,49 +20,39 @@ import lombok.RequiredArgsConstructor;
 public class ProductoServicio extends BaseService<Producto, Long, ProductoRepositorio> {
 
 	private final CategoriaServicio categoriaServicio;
-
 	private final StorageService storageService;
 	
 	
 	public Producto nuevoProducto(CreateProductoDTO nuevo, MultipartFile file) {
 		String urlImagen = null;
+				
 		if (!file.isEmpty()) {
 			String imagen = storageService.store(file);
 			urlImagen = MvcUriComponentsBuilder
-					.fromMethodName(FicherosController.class, "serveFile", imagen, null)
-					.build().toUriString();
+						.fromMethodName(FicherosController.class, "serveFile", imagen, null)  
+						.build().toUriString();
 		}
+				
+		
 		// En ocasiones, no necesitamos el uso de ModelMapper si la conversión que vamos a hacer
 		// es muy sencilla. Con el uso de @Builder sobre la clase en cuestión, podemos realizar 
 		// una transformación rápida como esta.
+		
 		Producto nuevoProducto = Producto.builder()
 				.nombre(nuevo.getNombre())
 				.precio(nuevo.getPrecio())
 				.imagen(urlImagen)
 				.categoria(categoriaServicio.findById(nuevo.getCategoriaId()).orElse(null))
 				.build();
+		
 		return this.save(nuevoProducto);
-	}
-
-	/**
-	 *
-	 * @param name de Producto
-	 * @param pageable
-	 * @return
-	 */
-	public Page<Producto> findByNombre(String name, Pageable pageable) {
-		return this.repositorio.findByNombreContainsIgnoreCase(name, pageable);
+		
 	}
 
 
-	/**
-	 *
-	 * @param name
-	 * @param precio
-	 * @param pageable
-	 * @return
-	 */
-	public Page<Producto> findByNombreAndPrecio(String name, float precio, Pageable pageable) {
-		return this.repositorio.findByNombreContainsIgnoreCaseAndPrecioLessThan(name, precio, pageable);
+	public Page<Producto> findByNombre(String txt, Pageable pageable) {
+		return this.repositorio.findByNombreContainsIgnoreCase(txt, pageable);
 	}
+	
+	
 }

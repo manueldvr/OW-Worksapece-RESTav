@@ -16,7 +16,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
 	}
-
+	
 
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,

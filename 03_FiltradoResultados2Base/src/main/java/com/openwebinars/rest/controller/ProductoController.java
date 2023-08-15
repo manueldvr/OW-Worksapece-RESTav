@@ -2,14 +2,21 @@ package com.openwebinars.rest.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.openwebinars.rest.error.SearchProductoNoResultException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,6 +24,7 @@ import com.openwebinars.rest.dto.CreateProductoDTO;
 import com.openwebinars.rest.dto.ProductoDTO;
 import com.openwebinars.rest.dto.converter.ProductoDTOConverter;
 import com.openwebinars.rest.error.ProductoNotFoundException;
+import com.openwebinars.rest.error.SearchProductoNoResultException;
 import com.openwebinars.rest.modelo.Producto;
 import com.openwebinars.rest.service.ProductoServicio;
 import com.openwebinars.rest.util.pagination.PaginationLinksUtils;
@@ -26,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class ProductoController {
-
 
 	private final ProductoServicio productoServicio;
 	private final ProductoDTOConverter productoDTOConverter;
@@ -45,13 +52,47 @@ public class ProductoController {
 		if (result.isEmpty()) {
 			throw new ProductoNotFoundException();
 		} else {
+
 			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
 
 			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
 					.body(dtoList);
+
 		}
+
 	}
+	
+	
+	
+	
+	/**
+	 * Obtener un listado de productos por nombre
+	 * @param txt Cadena de caracteres que se usará para buscar en el nombre
+	 * @return 404 si no se encuentran resultados. 200 y el conjunto de productos si se encuentra
+	 */
+	@GetMapping(value = "/producto", params = "nombre")
+	public ResponseEntity<?> buscarProductosPorNombre(
+			@RequestParam("nombre") String txt,
+			Pageable pageable, HttpServletRequest request) {
+		
+		Page<Producto> result = productoServicio.findByNombre(txt, pageable);		
+	
+		if (result.isEmpty()) {
+			throw new SearchProductoNoResultException(txt);
+		} else {
+
+			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
+			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+
+			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
+					.body(dtoList);
+
+		}
+		
+	}
+	
+	
 
 	/**
 	 * Obtenemos un producto en base a su ID
@@ -61,47 +102,10 @@ public class ProductoController {
 	 */
 	@GetMapping("/producto/{id}")
 	public Producto obtenerUno(@PathVariable Long id) {
+
 		return productoServicio.findById(id).orElseThrow(() -> new ProductoNotFoundException(id));
+
 	}
-
-
-	/**
-	 * Buscar productos por nombre o por todo lo que incluya a la cadena de caracteres de nombre.
-	 * @param nombre atributo de Producto
-	 * @param pageable
-	 * @param request http request
-	 * @return pagination in body and a header
-	 */
-	@GetMapping(value= "/producto", params= "nombre")
-	public ResponseEntity<?> buscarProductosPorNombre(@RequestParam("nombre") String nombre,
-													  Pageable pageable, HttpServletRequest request){
-		Page<Producto> result = productoServicio.findByNombre(nombre, pageable);
-		if (result.isEmpty()){
-			throw new SearchProductoNoResultException(nombre);
-		} else {
-			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
-			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder)).body(dtoList);
-		}
-	}
-
-
-	@GetMapping(value= "/producto", params= {"nombre", "precio"})
-	public ResponseEntity<?> buscarProductosPorNombreYPrecio(@RequestParam("nombre") String nombre,
-															 @RequestParam("precio") float precio,
-													  		 Pageable pageable, HttpServletRequest request){
-		Page<Producto> result = productoServicio.findByNombreAndPrecio(nombre, precio, pageable);
-		if (result.isEmpty()){
-			throw new SearchProductoNoResultException(nombre);
-		} else {
-			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
-			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder)).body(dtoList);
-		}
-	}
-
-
-	//--
 
 	/**
 	 * Insertamos un nuevo producto
@@ -152,3 +156,4 @@ public class ProductoController {
 	}
 
 }
+
