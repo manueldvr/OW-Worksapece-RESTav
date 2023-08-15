@@ -2,6 +2,11 @@ package com.openwebinars.rest.service;
 
 import java.util.Optional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,11 +22,6 @@ import com.openwebinars.rest.service.base.BaseService;
 import com.openwebinars.rest.upload.StorageService;
 
 import lombok.RequiredArgsConstructor;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 @Service
 @RequiredArgsConstructor
@@ -61,38 +61,51 @@ public class ProductoServicio extends BaseService<Producto, Long, ProductoReposi
 	public Page<Producto> findByNombre(String txt, Pageable pageable) {
 		return this.repositorio.findByNombreContainsIgnoreCase(txt, pageable);
 	}
-
-
-	/**
-	 * Find by arguments method controller.
-	 * Se usa una clase anonima (por eso los parametros estan definidos como final.
-	 * @param nombre
-	 * @param precio
-	 * @param pageable
-	 * @return page of Productos
-	 */
-	public Page<Producto> findByArgs(final Optional<String> nombre, final Optional<Float> precio,Pageable pageable ){
+	
+	public Page<Producto> findByArgs(final Optional<String> nombre, final Optional<Float> precio, Pageable pageable) {
+		
 		Specification<Producto> specNombreProducto = new Specification<Producto>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Predicate toPredicate(Root<Producto> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-				if (nombre.isPresent()){
-					return criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + nombre.get() + "%");
+				if (nombre.isPresent()) {
+					return criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")),"%" + nombre.get() + "%");
 				} else {
-					return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
+					return criteriaBuilder.isTrue(criteriaBuilder.literal(true)); // Es decir, que no filtramos nada
 				}
 			}
+			
 		};
-		Specification<Producto> specPrecioProductp = new Specification<Producto>() {
+		
+		Specification<Producto> precioMenorQue = new Specification<Producto>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Predicate toPredicate(Root<Producto> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				if (precio.isPresent()) {
 					return criteriaBuilder.lessThanOrEqualTo(root.get("precio"), precio.get());
-				}else{
-					return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
+				} else {
+					return criteriaBuilder.isTrue(criteriaBuilder.literal(true)); // Es decir, que no filtramos nada					
 				}
 			}
+		
+		
 		};
-		Specification<Producto> ambas = specNombreProducto.and(specPrecioProductp);
+		
+		Specification<Producto> ambas = specNombreProducto.and(precioMenorQue);
+		
 		return this.repositorio.findAll(ambas, pageable);
+		
 	}
+	
+	
 }

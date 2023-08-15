@@ -1,10 +1,11 @@
 package com.openwebinars.rest.controller;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,6 @@ import com.openwebinars.rest.util.pagination.PaginationLinksUtils;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
 public class ProductoController {
@@ -41,80 +40,36 @@ public class ProductoController {
 	private final ProductoDTOConverter productoDTOConverter;
 	private final PaginationLinksUtils paginationLinksUtils;
 
+	/**
+	 * Método que nos permite buscar sobre una lista de productos
+	 * @param txt Fragmento del nombre del producto
+	 * @param precio Precio tope
+	 * @param pageable
+	 * @param request
+	 * @return 200 OK. Si hay productos (o si hay productos que cumplan los parámetros de búsqueda).
+	 */
 
-	@GetMapping("/producto")
-	public ResponseEntity<?> buscarProductosPorVariosParams(
-			@RequestParam("nombre")Optional<String> nombre,
-			@RequestParam("precio")Optional<Float> precio,
+	@GetMapping(value = "/producto")
+	public ResponseEntity<?> buscarProductosPorVarios(
+			@RequestParam("nombre") Optional<String> txt,
+			@RequestParam("precio") Optional<Float> precio,
 			Pageable pageable, HttpServletRequest request) {
-
-		Page<Producto> result = productoServicio.findByArgs(nombre, precio, pageable);
+		
+		Page<Producto> result = productoServicio.findByArgs(txt, precio, pageable);
+	
 		if (result.isEmpty()) {
-			throw new ProductoNotFoundException();
+			throw new SearchProductoNoResultException();
 		} else {
+
 			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-			return ResponseEntity.ok()
-					.header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
+
+			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
 					.body(dtoList);
+
 		}
+		
 	}
-
-
-//	/**
-//	 * Obtenemos todos los productos
-//	 *
-//	 * @return 404 si no hay productos, 200 y lista de productos si hay uno o más
-//	 */
-//	@GetMapping("/producto")
-//	public ResponseEntity<?> obtenerTodos(@PageableDefault(size = 10, page = 0) Pageable pageable,
-//			HttpServletRequest request) {
-//		Page<Producto> result = productoServicio.findAll(pageable);
-//
-//		if (result.isEmpty()) {
-//			throw new ProductoNotFoundException();
-//		} else {
-//
-//			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
-//			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-//
-//			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
-//					.body(dtoList);
-//
-//		}
-//
-//	}
-//
-//
-//
-//	/**
-//	 * Obtener un listado de productos por nombre
-//	 * @param txt Cadena de caracteres que se usará para buscar en el nombre
-//	 * @return 404 si no se encuentran resultados. 200 y el conjunto de productos si se encuentra
-//	 */
-//	@GetMapping(value = "/producto", params = "nombre")
-//	public ResponseEntity<?> buscarProductosPorNombre(
-//			@RequestParam("nombre") String txt,
-//			Pageable pageable, HttpServletRequest request) {
-//
-//		Page<Producto> result = productoServicio.findByNombre(txt, pageable);
-//
-//		if (result.isEmpty()) {
-//			throw new SearchProductoNoResultException(txt);
-//		} else {
-//
-//			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
-//			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-//
-//			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
-//					.body(dtoList);
-//
-//		}
-//	}
-	
-
-
-
 
 
 	/**
@@ -125,6 +80,7 @@ public class ProductoController {
 	 */
 	@GetMapping("/producto/{id}")
 	public Producto obtenerUno(@PathVariable Long id) {
+
 		return productoServicio.findById(id).orElseThrow(() -> new ProductoNotFoundException(id));
 
 	}
