@@ -1,33 +1,76 @@
-# Manejo de Parametros de Consultas - *parte II*
+# JSONView Transformations
  
-Cuando debemos buscar en base a varios campos que se pueden combinar entre sí, la cantidad de posibilidades se multiplica exponencialmente.
+Mecanismo que proporciona Jackson2 y Spring para seleccionar qué campos de un objeto serán transformados a JSON.
 
-Manejo complicado en el Controlador
-- ¿qué parámetros sí hemos recibido?¿cuáles no?
+Este mecanismo permite tener, para un solo objeto Java diferentes representaciones en JSON.
 
-Consultas complejas en el repositorio
-- muy dificil con consultas con nombres derivados
-- también complicado con `@Query` o consultas nativas
+Muy cómodo para diferenciar 2 vistas para un objeto:
+- Conjunto de datos para un listado, una vista general,
+- Vista de detalle cuando de lo accede.
 
-## `Specification` y `JpaSpecificationExecutor`
 
-### `Specification`
-- Tiene un solo método. Mecanismo que nos permite predicados reutilizables para utilizar con `CriteriaQuery`.
-- Los predicados pueden ser todo lo complejos que necesitamos.
 
-```
-public interface Specification<T> {
-    Predicate toPredicat(Root<T>  root, CriteriaQuery query, CriteriaBuilder criteria);
+## Funcionamiento
+
+### Construcción
+
+1. Definimos una clase que tendrá dentro varias interfaces
+2. Serán las difrentes vistas que tendremos para una clase/entidad
+3. Las interfaces pueden heredar unas de otras:
+
+ie:
+```java
+public class ProductoViews {   // vistas del recurso Producto
+    public interface Dto { }
+    public interface DtoConPrecio extends Dto { }
 }
 ```
 
-### `JpaSpecificationExecutor`
+4. En el modelo se usa @JonView sobre los diferentes atributos
+5. Definmos, para cada uno, en qué vista o vistas lo queremos:
 
-Un repositorio que además de `CrudRepository` o un derivado, extienda a `JpaSpecificationExecutor`, podrá ejecutar consultas con un `Specification`.
+```java
+public class ProductoDTO {
+    @JsonView(ProductoViews.Dto.class) private String imagen;
+    @JsonView(ProductoViews.DtoConPrecio.class) private float precio;
+}
+```
 
+Es posible tener atributos que no tengan ningun @JsonView.
+No serìan selectivos, se obtendran siempre.
+
+### Como se usa
+
+1. Anotamos a nivel de método, con la vista que queremos obtener
+
+
+```java
+@JsonView(ProductoViews.DtoConPrecio.class)
+@GetMapping(value = "/producto")
+public ResponseEntity<?> buscarProductosPorVarios(...) { ...
+```
+
+2. Añadir en `application.properties`:
+`spring.jackson.mapper.default-view-inclusion=true`
+
+
+
+## ¿Cuándo utilizarlo?
+
+- Diferentes métodos en el controlador devuelven diferentes vistas de una misma clase (Maestro/Detalle).
+- En función del ROL del usuario que hace la petición, queremos devolver más o menos campos.
+
+ejemplo: Información de los Empleados de una Empresa
+- ROL USER: información básica
+- ROL ADMIN: info. más completa
+- ROL HHRR: info sobre salario, cotizaciones, ...
+
+
+
+   
 
 ---
 
 # Ref
 
-1. []().
+1. JSON Views: [Latest Jackson integration improvements in Spring](https://spring.io/blog/2014/12/02/latest-jackson-integration-improvements-in-spring).

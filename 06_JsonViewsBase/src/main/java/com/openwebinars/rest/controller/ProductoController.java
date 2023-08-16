@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.openwebinars.rest.dto.views.ProductoViews;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -51,10 +53,12 @@ public class ProductoController {
 	 * @return 200 OK. Si hay productos (o si hay productos que cumplan los
 	 *         parámetros de búsqueda).
 	 */
-
+	@JsonView(ProductoViews.DtoConPrecio.class)
 	@GetMapping(value = "/producto")
-	public ResponseEntity<?> buscarProductosPorVarios(@RequestParam("nombre") Optional<String> txt,
-			@RequestParam("precio") Optional<Float> precio, Pageable pageable, HttpServletRequest request) {
+	public ResponseEntity<?> buscarProductosPorVarios(
+			@RequestParam("nombre") Optional<String> txt,
+			@RequestParam("precio") Optional<Float> precio,
+			Pageable pageable, HttpServletRequest request) {
 
 		Page<Producto> result = productoServicio.findByArgs(txt, precio, pageable);
 

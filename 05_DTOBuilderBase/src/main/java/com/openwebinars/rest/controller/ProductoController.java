@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openwebinars.rest.dto.EditProductoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,15 +61,12 @@ public class ProductoController {
 		if (result.isEmpty()) {
 			throw new SearchProductoNoResultException();
 		} else {
-
-			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertToDto);
+			// converter con lombok
+			Page<ProductoDTO> dtoList = result.map(productoDTOConverter::convertProductoToProductoDTO);
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-
 			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(dtoList, uriBuilder))
 					.body(dtoList);
-
 		}
-		
 	}
 
 
@@ -101,13 +99,14 @@ public class ProductoController {
 	}
 
 	/**
-	 * 
-	 * @param editar
+	 * editar Producto se utiliza especificamente para editar solo 2 campos tulizando el DTO EditProductoDTO.
+	 *
+	 * @param editar del tipo EditProductoDTO
 	 * @param id
 	 * @return 200 Ok si la edición tiene éxito, 404 si no se encuentra el producto
 	 */
 	@PutMapping("/producto/{id}")
-	public Producto editarProducto(@RequestBody Producto editar, @PathVariable Long id) {
+	public Producto editarProducto(@RequestBody EditProductoDTO editar, @PathVariable Long id) {
 
 		return productoServicio.findById(id).map(p -> {
 			p.setNombre(editar.getNombre());

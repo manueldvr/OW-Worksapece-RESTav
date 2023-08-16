@@ -3,8 +3,27 @@
 # Patron DTO en peticiones y respuestas
  **ver Patron DTO**
 
+### Enitdades
 
+En sintesis son clases Java con determinadas anotaciones.
 
+Cumplen una serie de requisitos, **ver Patron DTO**.
+
+Se encargan de modelar los objetos en la capa de negocio. Es buena practica no usarlos en las demás capas.
+
+### DTO
+
+repitiendo: Objeto POJO que agrupa datos de la capa de negocio y sirve para transferir datos entre diferentes capas:
+
+- Objeto Plano -POJO-. Nada de lógica del negocio.
+Getters, Setters o constructores necesarios.
+- Serializable.
+- Puede tener parte de los datos de una sola entidad.
+- Puede tener algunos datos de más de una entidad.
+- Puede aglutinar todos los datos de varias entidades.
+- También conocido como Value Object.
+
+Pensado para aligerar las transacciones entre cliente/servidor.
 
 
 
@@ -67,7 +86,12 @@ Ejemplo es el *Usuario*, según la capa puede ser:
 #### Implementación de DTOs
 
 **Manualmente**
-- con un builder (lombok)
+- con un builder (**Lombok**)
+- - Lombok es un método artesanal, pero cómodo para transformar objetos.
+- - Permite construir objetos paso a paso, setteando cada uno de los atributos que va a necesitar.
+- - La entidad/DTO solo tiene que ser anotada con '@Builder'.
+- - Si el objeto y sus asociaciones es muy compleja, es posible que la configuración de *ModelMapper* sea a vez compleja, y la transformación paso a paso con `@Builder` más cómoda de implementar.
+
 
 **ModelMapper**
 

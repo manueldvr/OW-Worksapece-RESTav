@@ -1,5 +1,7 @@
 package com.openwebinars.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.openwebinars.rest.dto.views.ProductoViews;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,14 +10,23 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ProductoDTO {
-	
-	private long id;
-	private String nombre;
-	private String imagen;
-	private String categoria;
-	
 
+	@JsonView(ProductoViews.Dto.class) // podria no mostrarse
+	private long id;
+
+	@JsonView(ProductoViews.Dto.class)
+	private String nombre;
+
+	@JsonView(ProductoViews.Dto.class)
+	private String imagen;
+
+	@JsonView(ProductoViews.DtoConPrecio.class)
+	private float precio;
+
+	@JsonView(ProductoViews.Dto.class)
+	private String categoria;
 }
