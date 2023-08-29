@@ -26,3 +26,23 @@ cliente puede realizar muchos pedidos.<br>
 ○ **Población → Provincia:** <br>
 una población pertenece a una provincia,
 pero una provincia tiene muchas poblaciones.
+
+## Modelo de Respuesta
+
+Dada esta asociación, si nuestro controlador de obtener todos los
+productos devuelve un `List`/`Page` o un `Producto`, obtendremos todos
+los datos de `Producto` y de `Categoria`.
+
+```json
+{
+    "id": 33,
+    "nombre": "Mussels - Frozen",
+    "precio": 95,
+    "imagen": "http://dummyimage.com/206x125.bmp/cc0000/ffffff",
+    "categoria": {
+        "id": 1,
+        "nombre": "Comida"
+    }
+}
+```
+
