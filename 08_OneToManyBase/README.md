@@ -193,7 +193,7 @@ infinita**.
 
 ejemplo:
 
-![modelo de ejemplo para bidireccionalidad](Screenshot 2023-08-29 at 16.18.23.png)
+![modelo de ejemplo para bidireccionalidad](Screenshot.png)
 
 
 
