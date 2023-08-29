@@ -191,10 +191,39 @@ un mejor rendimiento.
 infinita**.
 ● Para solucionarlo, necesitamos algunos elementos
 
-ejemplo:
-
+modelo ejemplo:
 ![modelo de ejemplo para bidireccionalidad](Screenshot.png)
+Esta *composición* de Pedidos incluyen Lineas de Pedido (LineaPedido).
 
 
+## Implementación
 
+A nivel de entidad, con lombok:
+```java
+// Anotaciones
+public class Pedido {
+    
+ @EqualsAndHashCode.Exclude
+ @ToString.Exclude
+ @Builder.Default
+ @OneToMany(mappedBy = "pedido",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true)
+ private Set<LineaPedido> lineas =
+    new HashSet<>();
+ 
+ // resto de atributos y métodos
+}
+```
 
+```java
+// Anotaciones
+public class LineaPedido {
+    
+ @ManyToOne
+ @JoinColumn(name = "pedido_id")
+ private Pedido pedido;
+ 
+ // resto de atributos y métodos
+}
+```
