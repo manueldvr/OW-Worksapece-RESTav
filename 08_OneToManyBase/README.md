@@ -200,6 +200,13 @@ Esta *composición* de Pedidos incluyen Lineas de Pedido (LineaPedido).
 ## Implementación
 
 A nivel de entidad, con lombok:
+
+:warning: para romper la referencia circular usamos:
+`@EqualsAndHashCode.Exclude` y `@ToString.Exclude`.
+
+:warning: a nivel de JSON usamos `@JsonManagedReference` y `@JsonBackReference`.
+
+
 ```java
 // Anotaciones
 public class Pedido {
@@ -228,3 +235,21 @@ public class LineaPedido {
  // resto de atributos y métodos
 }
 ```
+
+**JsonManagedReference:**<br>
+○ la propiedad anotada es parte de una asociación bidireccional <br>
+○ su función es el enlace "padre" (o "reenvío").<br>
+○ El tipo de valor (clase) de la propiedad debe tener una única
+propiedad compatible anotada con JsonBackReference.<br>
+○ Se serializa/deserializa con normalidad<br>
+○ Es la referencia inversa coincidente que requiere un manejo
+especial<br>
+
+
+**JsonBackReference:**<br>
+○ la propiedad anotada es parte de una asociación bidireccional<br>
+○ su función es el enlace "hijo" (o "atrás").<br>
+○ La propiedad debe ser un bean, no una colección<br>
+○ No se serializa<br>
+○ En la deserialización, se crea un instancia dentro de la colección
+JsonManagedReference<br>
