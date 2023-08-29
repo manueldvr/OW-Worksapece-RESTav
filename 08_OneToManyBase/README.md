@@ -176,6 +176,7 @@ public class Categoria {
 # Asociaciones One-To-Many
 
 Suele ser complementaria a una asociación muchos a uno.<br>
+## :warning:
 + Los expertos en JPA/Hibernate no recomiendan implementar
 asociaciones **uno-a-muchos unidireccionales**, por el mal
 rendimiento que provocan.<br>
