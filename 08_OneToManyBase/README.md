@@ -186,8 +186,8 @@ una para los productos, otra para categorías, y una tabla join.
 un mejor rendimiento.
 
 ## Bidireccionalidad
-● Recomendable para el tratamiento eficiente de la asociación.
-● Sin embargo, con **Lombok** podemos tener problemas de **recursión
+● Recomendable para el tratamiento eficiente de la asociación.<br>
+● :warning: Sin embargo, con **Lombok** podemos tener problemas de **recursión
 infinita**.
 ● Para solucionarlo, necesitamos algunos elementos
 
