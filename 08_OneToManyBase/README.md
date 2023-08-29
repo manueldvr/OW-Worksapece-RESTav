@@ -174,3 +174,27 @@ public class Categoria {
 ---
 
 # Asociaciones One-To-Many
+
+Suele ser complementaria a una asociación muchos a uno.<br>
++ Los expertos en JPA/Hibernate no recomiendan implementar
+asociaciones **uno-a-muchos unidireccionales**, por el mal
+rendimiento que provocan.<br>
+Ejemplo: <br>
+la asociación Producto ← Categoría generaría 3 tablas:
+una para los productos, otra para categorías, y una tabla join.
++ Siempre es preferible el tratamiento **bidireccional**, que proporciona
+un mejor rendimiento.
+
+## Bidireccionalidad
+● Recomendable para el tratamiento eficiente de la asociación.
+● Sin embargo, con **Lombok** podemos tener problemas de **recursión
+infinita**.
+● Para solucionarlo, necesitamos algunos elementos
+
+ejemplo:
+
+![modelo de ejemplo para bidireccionalidad](Screenshot 2023-08-29 at 16.18.23.png)
+
+
+
+
