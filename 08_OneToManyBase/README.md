@@ -136,7 +136,10 @@ lecciones anteriores:
 + GET por ID: Objeto completo.
 + POST: Con un DTO
 + PUT: Con un DTO
-+ DELETE: Tan solo con el ID
++ DELETE: Tan solo con el ID<br>
+
+● Se utilizan anotaciones especiales para definir contra qué columna en la tabla hace efectiva la relación entre ambas clases.
++ `@JoinComlumn`
 
 **Producto**
 
@@ -199,13 +202,13 @@ Esta *composición* de Pedidos incluyen Lineas de Pedido (LineaPedido).
 
 ## Implementación
 
+### 1
 A nivel de entidad, con lombok:
 
 :warning: para romper la referencia circular usamos:
 `@EqualsAndHashCode.Exclude` y `@ToString.Exclude`.
 
 :warning: a nivel de JSON usamos `@JsonManagedReference` y `@JsonBackReference`.
-
 
 ```java
 // Anotaciones
@@ -235,21 +238,59 @@ public class LineaPedido {
  // resto de atributos y métodos
 }
 ```
+<br>
 
-**JsonManagedReference:**<br>
+#### JsonManagedReference
 ○ la propiedad anotada es parte de una asociación bidireccional <br>
-○ su función es el enlace "padre" (o "reenvío").<br>
+○ su función es el enlace *"padre"* (o *"reenvío"*).<br>
 ○ El tipo de valor (clase) de la propiedad debe tener una única
-propiedad compatible anotada con JsonBackReference.<br>
+propiedad compatible anotada con `JsonBackReference`.<br>
 ○ Se serializa/deserializa con normalidad<br>
 ○ Es la referencia inversa coincidente que requiere un manejo
 especial<br>
+<br>
 
-
-**JsonBackReference:**<br>
+#### JsonBackReference
 ○ la propiedad anotada es parte de una asociación bidireccional<br>
-○ su función es el enlace "hijo" (o "atrás").<br>
-○ La propiedad debe ser un bean, no una colección<br>
+○ su función es el enlace *"hijo"* (o *"atrás"*).<br>
+○ La propiedad debe ser un `bean`, no una colección<br>
 ○ No se serializa<br>
 ○ En la deserialización, se crea un instancia dentro de la colección
-JsonManagedReference<br>
+`JsonManagedReference`.<br>
+<br>
+
+#### Uso de Lazy
+En los parámetros de `@ManyToOne()` se puede usar `fetch-FetchType`.
++ `@ManyToOne(fetch = FetchType.LAZY)` evita una carga activa que traiga todos los elementos.
+
+### 2 Configuración
+
+#### 2.1 
+Se agrega una clase: `MiConfiguracion` para habilitar JPA Auditing con `@EnableJpaAuditing`.
+sirve para cuando se crea un pedido no se tenga que ingresar la fecha manualmente.
+
+#### 2.2
+Mas datos en la BD. y manejo de errores.
+
+#### 2.3
+Se agrega la anotación al modelo `@EntityListeners` para auditar.
+
+En el caso de `Pedido` queda:
+
+```java
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Pedido {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String cliente;
+
+    @CreatedDate
+    private LocalDateTime fecha;
+}
+```
+
