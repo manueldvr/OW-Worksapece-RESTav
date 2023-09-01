@@ -294,3 +294,100 @@ public class Pedido {
 }
 ```
 
+---
+
+repetido:
+
+
+## Evitar errores en asociaciones bidireccionales
+
+Los expertos en JPA e Hibernate suelen recomendar tratar de forma bidireccional las asociaciones. De esta forma, se suele diseñar un mejor DDL, sobre todo para asociaciones one-to-many o many-to-many. Sin embargo, el uso de asociaciones bidirecionales con Lombok puede llegar a provocar algunos problemas de recursión infinita. Esta viene provocada por la propia bidireccionalidad.
+
+Por ejemplo, un producto, asociado mediante many-to-one a una categoría, y esta a su vez asociada mediante one-to-many a un conjunto de productos. Cada uno de ellos, asociados, a su vez con la categoría, y así indefinidamente.
+
+De nuevo, los expertos en JPA e Hibernate nos recomiendan dar un tratamiento especial a los métodos equals, hashCode y toString. Con todo, entrar en profundidad en esta materia queda fuera del alcance del curso.
+
+En el ámbito de este curso, tenemos que dar una solución en dos niveles:
+
+### Solución a nivel de Lombok
+
+Para solucionar el problema a nivel de lombok (métodos equals, hashCode y toString) podemos usar algunas anotaciones para excluir determinados campos de estos métodos, y cortar así la recursividad.
+
+Estas anotaciones son @EqualsAndHashCode.Exclude y @ToString.Exclude. Deberíamos incluirlas en uno de los lados de la asociación (lo normal suele ser en el lado mappedBy).
+
+```java
+// Anotaciones
+public class LineaPedido {
+
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
+
+    // resto de atributos y métodos
+}
+
+
+// Anotaciones
+public class Pedido {
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Builder.Default
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LineaPedido> lineas = new HashSet<>();
+
+    // resto de atributos y métodos
+}
+```
+
+### Solución a nivel de Jackson
+
+Esta recursividad infinita también nos afecta en la transformación hacia/desde JSON. Jackson ofrece un par de anotaciones para solucionar el problema:
+
+JsonManagedReference: se coloca a nivel de atributo (que forme parte de una asociación bidireccional). Este será el lado que se serialice con normalidad.
+JsonBackReference: es la anotación complementaria a la anterior. Suele anotarse sobre un bean, y no una colección. Este lado no se serializa.
+
+```java
+// Anotaciones
+public class LineaPedido {
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
+
+    // resto de atributos y métodos
+}
+
+
+// Anotaciones
+public class Pedido {
+
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Builder.Default
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LineaPedido> lineas = new HashSet<>();
+
+    // resto de atributos y métodos
+}
+```
+
+
+### Reto interesante
+
+En esta lección nuestra aplicación ha crecido un poco (sobre todo en modelo). Se propone completar la parte del controlador, realizando algunas tareas de las lecciones anteriores.
+
+1. Crear un DTO para las peticiones GET (todos los recursos) para Pedido y Línea de pedido. Se puede realizar la transformación en una nueva clase Converter, y usando Lombok.
+2. Crear una vista con @JsonView para las peticiones GET por ID, de forma que en las líneas de venta, para el atributo producto, no se muestre el precio (lo tenemos en línea de venta), ni la imagen ni la categoría.
+3. Crear la petición GET por ID en el controlador, siguiendo el ejemplo de las que ya hemos realizado anteriormente (Producto, Categoría).
+4. Crear la petición POST para insertar un nuevo Pedido con sus Líneas de pedido. Para ello, vamos a crear un par de DTOs
+
+- - NuevoPedidoDTO, con nombre y Set<NuevaLineaPedidoDTO>
+- - NuevaLineaPedidoDTO, con el ID del producto y la cantidad.
+
+El conversor de NuevaLineaPedidoDTO a LineaPedido tendrá que usar el servicio de producto, para transformar un ID de producto en un Producto.
+
+5. Crear la petición PUT, que será muy similar a las POST.
+6. Crear la petición DELETE, que será muy parecida a la de producto (con la asociación bidireccional y el borrado en cascada, al borrar un Pedido, se borrarán sus LineaPedido asociadas).
