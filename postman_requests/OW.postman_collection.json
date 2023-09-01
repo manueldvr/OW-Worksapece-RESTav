@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "5be0d632-9c1b-4e1e-9b41-51cecd920ca7",
+		"name": "OW",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "11027178"
+	},
+	"item": [
+		{
+			"name": "producto all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/producto/"
+			},
+			"response": []
+		},
+		{
+			"name": "producto all by predicate x nada y/o precio y/o nombre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/producto/?nombre=w&precio=80",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "nombre",
+							"value": "w"
+						},
+						{
+							"key": "precio",
+							"value": "80"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto all paginable con links de paginacion",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/producto/?page=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto all XML paginable con links de paginacion",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/producto/?page=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto by nombre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/producto/?nombre=ora",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "nombre",
+							"value": "ora"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto by nombre & paginable",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/producto/?nombre=o&size=10&page=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "nombre",
+							"value": "o"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto by nombre & precio & paginable",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/producto/?nombre=ora&precio=91",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"producto",
+						""
+					],
+					"query": [
+						{
+							"key": "nombre",
+							"value": "ora"
+						},
+						{
+							"key": "precio",
+							"value": "91"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto x id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/producto/99"
+			},
+			"response": []
+		},
+		{
+			"name": "producto",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\" : \"Juice - Orange\",\n    \"precio\" : 11.1,\n    \"categoriaId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/producto"
+			},
+			"response": []
+		},
+		{
+			"name": "producto bad req",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\" : \"Juice - Orange\",\n    \"precio\" : 11.1,\n    \"categoriaId\": \"Uno\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/producto"
+			},
+			"response": []
+		},
+		{
+			"name": "productoManual",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\" : \"empanada\",\n    \"precio\" : 11.1,\n    \"categoriaId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/productoManual"
+			},
+			"response": []
+		},
+		{
+			"name": "producto/id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"empanada\",\n    \"precio\" : 11.1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/producto/20"
+			},
+			"response": []
+		},
+		{
+			"name": "roducto/id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8081/producto/200"
+			},
+			"response": []
+		},
+		{
+			"name": "nuevoProducto",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "nuevo",
+							"type": "file",
+							"src": "nuevo.json"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "1570906727488_cafe.jpg"
+						}
+					]
+				},
+				"url": "http://localhost:8081/producto"
+			},
+			"response": []
+		},
+		{
+			"name": "pedido",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/pedido/"
+			},
+			"response": []
+		}
+	]
+}
