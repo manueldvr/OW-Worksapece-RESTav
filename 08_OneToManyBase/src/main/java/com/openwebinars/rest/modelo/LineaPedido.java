@@ -22,7 +22,7 @@ public class LineaPedido {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     @JsonBackReference
