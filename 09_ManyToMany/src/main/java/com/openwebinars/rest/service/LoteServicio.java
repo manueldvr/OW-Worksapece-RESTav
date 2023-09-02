@@ -24,21 +24,14 @@ public class LoteServicio extends BaseService<Lote, Long, LoteRepositorio> {
 	}
 
 	public Lote nuevoLote(CreateLoteDTO nuevoLote) {
-		
 		Lote l = Lote.builder()
 					.nombre(nuevoLote.getNombre())
 					.build();
-		
 		nuevoLote.getProductos().stream()
 			.map(id -> {
 				return productoServicio.findByIdConLotes(id).orElseThrow(() -> new LoteCreateException());
 			})
 			.forEach(l::addProducto);
-			
 		return save(l);
-		
 	}
-	
-	
-
 }

@@ -27,23 +27,19 @@ import lombok.RequiredArgsConstructor;
 public class LoteController {
 	
 	private final LoteServicio loteServicio;
+
 	private final PaginationLinksUtils paginationLinksUtils;
 	
 	
 	@GetMapping("/")
 	public ResponseEntity<?> lotes(Pageable pageable, HttpServletRequest request) throws LoteNotFoundException {
 		Page<Lote> result = loteServicio.findAll(pageable);
-		
-		
 		if (result.isEmpty()) {
 			throw new LoteNotFoundException();
 		} else {
-			
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-
 			return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(result, uriBuilder))
 					.body(result);
-
 		}
 	}
 	
@@ -51,7 +47,6 @@ public class LoteController {
 	@PostMapping("/")
 	public ResponseEntity<?> nuevoLote(@RequestBody CreateLoteDTO nuevoLote) {
 		Lote lote = loteServicio.nuevoLote(nuevoLote);
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(lote);
 	}
 

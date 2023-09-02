@@ -25,7 +25,7 @@ import lombok.ToString;
 @Builder
 @Data @NoArgsConstructor @AllArgsConstructor
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Producto.class )
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Producto.class )
 public class Producto {
 
 	@Id @GeneratedValue
@@ -42,7 +42,7 @@ public class Producto {
 	@JoinColumn(name="categoria_id")
 	private Categoria categoria;
 	
-	//@JsonBackReference
+	@JsonBackReference
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 //	@ManyToMany(mappedBy="productos", fetch = FetchType.EAGER)

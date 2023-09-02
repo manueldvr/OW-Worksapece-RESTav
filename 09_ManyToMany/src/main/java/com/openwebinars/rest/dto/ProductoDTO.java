@@ -17,14 +17,16 @@ public class ProductoDTO {
 	
 	@JsonView(ProductoViews.Dto.class)
 	private long id;
+
 	@JsonView(ProductoViews.Dto.class)
 	private String nombre;
+
 	@JsonView(ProductoViews.Dto.class)
 	private String imagen;
+
 	@JsonView(ProductoViews.DtoConPrecio.class)
 	private float precio;
+
 	@JsonView(ProductoViews.Dto.class)
 	private String categoria;
-	
-
 }
