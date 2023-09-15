@@ -49,3 +49,5 @@ insert into ciudad (id, nombre, pais_id, lat, lng) values (37, 'Cancún', 4, '21
 insert into ciudad (id, nombre, pais_id, lat, lng) values (38, 'Santiago de Querétaro', 4, '20.6121228', '-100.4802575');
 insert into ciudad (id, nombre, pais_id, lat, lng) values (39, 'Acapulco', 4, '16.8354485', '-99.932349');
 insert into ciudad (id, nombre, pais_id, lat, lng) values (40, 'San Luis Potosí', 4, '22.1127046', '-101.0261098');
+
+

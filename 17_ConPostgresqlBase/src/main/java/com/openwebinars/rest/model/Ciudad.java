@@ -11,11 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Se expondra un API para Paises y sus ciudades pertenecientes.
- *
- * Con una asociaciòn uni-direccional *Many-To-One*.
- */
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 public class Ciudad {
@@ -24,11 +19,11 @@ public class Ciudad {
 	private Long id;
 	
 	private String nombre;
-
+	
 	private String lat;
-
+	
 	private String lng;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "pais_id")
 	private Pais pais;
