@@ -80,6 +80,9 @@ REST.
 + Forma parte del proyecto **Spring Data REST**.
 + Lo podremos ver en próximas lecciones.
 
+
+
+
 ### Spring Data REST
 + Es la suma de **Spring Data + Spring HATEOAS + HAL**
 + Permite exponer, de forma muy sencilla, repositorios de Spring
@@ -87,7 +90,7 @@ Data como si fuera un API Rest que sigue los principios
 HATEOAS y en formato HAL.
 + Lo aprenderemos a usar en las próximas lecciones.
 
-
+---
 
 
 # Spring Data Rest
@@ -112,9 +115,9 @@ definidos en nuestros repositorios.<br>
 
 ● Podemos engancharnos (**hook**) en el manejo de peticiones REST y
 otros eventos a través del manejo de ApplicationEvents de Spring.<br>
-● Expone metadatos sobre el modelo como un esquema JSON o ALPS<br>
+● Expone metadatos sobre el modelo como un esquema JSON o **ALPS**<br>
 ● Permite definir representaciones específicas del modelo a través de
-**proyecciones**.<br>
+**Proyecciones**.<br>
 ● Envía una variante personalizada del **HAL browser** para aprovechar
 los metadatos expuestos.<br>
 
@@ -123,6 +126,7 @@ predeterminados expuestos.<br>
 ● Actualmente (versión 3.2.0) soporta JPA, MongoDB, Neo4j, Solr,
 Cassandra y Gemfire.
 
+---
 
 # Proyecto con Spring Data REST
 
@@ -135,6 +139,10 @@ Cassandra y Gemfire.
 
 
 ## Entidades
+
+Se expondra un API para Paises y sus ciudades pertenecientes.
+
+Con una asociaciòn uni-direccional *Many-To-One*.
 
 #### Modelos
 
