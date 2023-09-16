@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.openwebinars.rest</groupId>
-	<artifactId>17_ConPostgresqlBase</artifactId>
+	<artifactId>17_ConPostgresqlCompleto</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>17_ConPostgresqlBase</name>
+	<name>17_ConPostgresqlCompleto</name>
 	<description>Ejemplo de conexión con Postgresql</description>
 
 	<properties>
@@ -59,6 +59,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
