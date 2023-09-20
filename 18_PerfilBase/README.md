@@ -108,7 +108,6 @@ comandos:
 `docker exec -ti postgresql1 psql -U postgres -W postgres`
 
 si un puerto esta ocupado, buscar el proceso que lo retiene:
-
 `sudo lsof -i :<PUERTO>`
 
 luego:
